@@ -3,6 +3,9 @@ const inquirer = require('./node_modules/inquirer');
 const mysql = require('./node_modules/mysql2');
 const cTable = require('./node_modules/console.table');
 const query = require('./queries/queries'); // sql queries
+// variables for display
+const greenC = '\x1b[32m';
+const art = require('./assets/keyboard/art');
 
 
 // connect to database
@@ -13,22 +16,7 @@ const db = mysql.createConnection(
       password: 'mysqlpass',
       database: 'employees_db'
     },
-    // console.log(`Connected to the employees_db database.`)
+    // console.log(greenC, `Connected to the employees_db database.`);
   );
 
-console.log('\x1b[32m',
-`
-
-
-
-███████╗███╗   ███╗██████╗ ██╗      ██████╗ ██╗   ██╗███████╗███████╗    ████████╗██████╗  █████╗  ██████╗██╗  ██╗███████╗██████╗ 
-██╔════╝████╗ ████║██╔══██╗██║     ██╔═══██╗╚██╗ ██╔╝██╔════╝██╔════╝    ╚══██╔══╝██╔══██╗██╔══██╗██╔════╝██║ ██╔╝██╔════╝██╔══██╗
-█████╗  ██╔████╔██║██████╔╝██║     ██║   ██║ ╚████╔╝ █████╗  █████╗         ██║   ██████╔╝███████║██║     █████╔╝ █████╗  ██████╔╝
-██╔══╝  ██║╚██╔╝██║██╔═══╝ ██║     ██║   ██║  ╚██╔╝  ██╔══╝  ██╔══╝         ██║   ██╔══██╗██╔══██║██║     ██╔═██╗ ██╔══╝  ██╔══██╗
-███████╗██║ ╚═╝ ██║██║     ███████╗╚██████╔╝   ██║   ███████╗███████╗       ██║   ██║  ██║██║  ██║╚██████╗██║  ██╗███████╗██║  ██║
-╚══════╝╚═╝     ╚═╝╚═╝     ╚══════╝ ╚═════╝    ╚═╝   ╚══════╝╚══════╝       ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
-                                                                                                                                  
-
-
-
- `);
+console.log(greenC , art);
