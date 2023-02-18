@@ -73,6 +73,11 @@ This list includes resources used for the project.
 - [MySQL](https://www.mysql.com/)
 - [Shields.io - license badge](https://shields.io/)
 
+To Add: 
+https://stackoverflow.com/questions/9781218/how-to-change-node-jss-console-font-color
+https://stackoverflow.com/questions/64381195/how-do-you-input-an-ascii-art-image-into-the-console-in-js
+https://marketplace.visualstudio.com/items?itemName=BitBelt.converttoasciiart
+
 https://www.sqlines.com/mysql/set_foreign_key_checks
 
 <p align="right">(<a href="#employee-tracker">back to top</a>)</p>
