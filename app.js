@@ -19,4 +19,36 @@ const db = mysql.createConnection(
     // console.log(greenC, `Connected to the employees_db database.`);
   );
 
-console.log(greenC , art);
+async function prompt ( ) {
+    try {
+        const answer = await inquirer.prompt([
+            {
+                type: 'list',
+                name: 'choice',
+                message: 'What would you like to do?',
+                choices: ['View all departments', 
+                        'View all roles', 
+                        'View all employees',
+                        'Add a department',
+                        'Add a role',
+                        'Add an employee',
+                        'Update an employee role',
+                        'Quit']
+            },
+        ]);
+
+        console.log(answer.choice);
+        // switch statement for different options for sql manipulation 
+
+        } catch (err) {
+            console.log(err);
+    }
+};
+
+function init ( ) {
+    console.log(greenC , art);
+    prompt();
+};
+
+
+init();
