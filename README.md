@@ -73,6 +73,8 @@ This list includes resources used for the project.
 - [MySQL](https://www.mysql.com/)
 - [Shields.io - license badge](https://shields.io/)
 
+https://www.sqlines.com/mysql/set_foreign_key_checks
+
 <p align="right">(<a href="#employee-tracker">back to top</a>)</p>
 
 <!-- License & badge -->
