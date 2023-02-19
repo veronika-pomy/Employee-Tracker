@@ -36,7 +36,7 @@ async function prompt ( ) {
             // create obj to connect to mysql 
             const connection = mysql.createConnection(sql,console.log(color, `Connected to the employees_db database.`)); 
 
-            // need to end connection after each query 
+            // end connection after each query 
             switch(answer.choice) {
                 case 'View all departments':
                     console.log(color, `User decided to: ${answer.choice}`);
@@ -77,9 +77,10 @@ async function prompt ( ) {
         };
         } catch (err) {
             console.log(err);
-    }
+    };
 };
 
+// initialize app
 function init ( ) {
     console.log(color , greeting);
     prompt();
