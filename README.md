@@ -77,6 +77,12 @@ To Add:
 https://stackoverflow.com/questions/9781218/how-to-change-node-jss-console-font-color
 https://stackoverflow.com/questions/64381195/how-do-you-input-an-ascii-art-image-into-the-console-in-js
 https://marketplace.visualstudio.com/items?itemName=BitBelt.converttoasciiart
+https://stackoverflow.com/questions/47228227/nodejs-how-to-display-table-structured-in-console
+https://javarevisited.blogspot.com/2012/11/how-to-join-three-tables-in-sql-query-mysql-sqlserver.html
+
+
+https://www.youtube.com/watch?v=8yIuyUum3XU
+https://github.com/unmeshvrije/database_examples
 
 https://www.sqlines.com/mysql/set_foreign_key_checks
 

@@ -3,14 +3,15 @@ const inquirer = require('./node_modules/inquirer');
 const mysql = require('./node_modules/mysql2');
 const util = require('./node_modules/util/util');
 const cTable = require('./node_modules/console.table');
-const { CONNECTION_QUERY, NEW_QUERY } = require('./queries/queries');
+const { CONNECTION_QUERY, DEPARTMENT_QUERY, ROLE_QUERY, EMPLOYEES_QUERY } = require('./queries/queries');
 
 // variables for display
 const color = '\u001b[36m'; // cyan
 const greeting = require('./assets/keyboard/art');
 
-// var that will become connection obj
+// vars that will become connection objs
 let connection;
+let execQuery;
 
 async function prompt ( ) {
     try {
@@ -30,51 +31,83 @@ async function prompt ( ) {
             },
         ]);
 
-        // if connection has not been est yet, create connection obj and execQuery obj
+        const usersChoice = answer.choice;
+
+        // if connection has not been established yet, create connection obj and execQuery obj
         if (!connection) {
-            // create obj to connect to mysql 
-            connection = mysql.createConnection(CONNECTION_QUERY,console.log(color, `Connected to the employees_db database.`)); 
-            const execQuery = util.promisify(connection.query.bind(connection)); // make connection an obj inside execQuery
+            connection = mysql.createConnection(CONNECTION_QUERY); 
+            execQuery = util.promisify(connection.query.bind(connection)); // make connection an obj inside execQuery
         }
 
         // sql queries based on choice 
-        switch(answer.choice) {
+        switch(usersChoice) {
             case 'View all departments':
-                console.log(color, `User decided to: ${answer.choice}`);
-                prompt ( );
-            break;
+                try {
+                    await execQuery(DEPARTMENT_QUERY, (err, res) => {
+                        if (err) {
+                            console.error(err);
+                        } else {
+                            console.table(color,"     ", res, "     ");
+                            prompt ( );
+                        };
+                });
+                } catch (err) {
+                    console.error(err);
+                };
+                break;
             case 'View all roles':
-                console.log(color, `User decided to: ${answer.choice}`);
+                try {
+                    await execQuery(ROLE_QUERY, (err, res) => {
+                        if (err) {
+                            console.error(err);
+                        } else {
+                            console.table(color,"     ", res, "     ");
+                            prompt ( );
+                        };
+                });
+                } catch (err) {
+                    console.error(err);
+                };
                 prompt ( );
             break;
             case 'View all employees':
-                console.log(color, `User decided to: ${answer.choice}`);
-                prompt ( );
+                try {
+                    await execQuery(EMPLOYEES_QUERY, (err, res) => {
+                        if (err) {
+                            console.error(err);
+                        } else {
+                            console.table(color,"     ", res, "     ");
+                            prompt ( );
+                        };
+                });
+                } catch (err) {
+                    console.error(err);
+                };
             break;
             case 'Add a department':
-                console.log(color, `User decided to: ${answer.choice}`);
+                console.log(color, `User decided to: ${usersChoice}`);
                 prompt ( );
             break;
             case 'Add a role':
-                console.log(color, `User decided to: ${answer.choice}`);
+                console.log(color, `User decided to: ${usersChoice}`);
                 prompt ( );
             break;
             case 'Add an employee':
-                console.log(color, `User decided to: ${answer.choice}`);
+                console.log(color, `User decided to: ${usersChoice}`);
                 prompt ( );
             break;
             case 'Update an employee role':
-                console.log(color, `User decided to: ${answer.choice}`);
+                console.log(color, `User decided to: ${usersChoice}`);
                 prompt ( );
             break;
             case 'Quit':
-                console.log(color, `User decided to: ${answer.choice}`);
+                console.log(color, `User decided to: ${usersChoice}`);
                 connection.end();
                 return;
         };
 
-        } catch (err) {
-            console.log(err);
+    } catch (err) {
+        console.log(err);
     };
 };
 
