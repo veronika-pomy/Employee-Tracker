@@ -3,20 +3,10 @@ const inquirer = require('./node_modules/inquirer');
 const mysql = require('./node_modules/mysql2');
 const cTable = require('./node_modules/console.table');
 const query = require('./queries/queries'); // sql queries
+const sql = require('./queries/queries');
 // variables for display
 const color = '\u001b[36m'; // cyan
 const greeting = require('./assets/keyboard/art');
-
-// connect to database
-// const db = mysql.createConnection(
-//     {
-//       host: 'localhost',
-//       user: 'root',
-//       password: 'mysqlpass',
-//       database: 'employees_db'
-//     },
-//     // console.log(color, `Connected to the employees_db database.`)
-//   );
 
 async function prompt ( ) {
     try {
@@ -37,41 +27,54 @@ async function prompt ( ) {
         ]);
 
         // sql queries based on choice 
-        
-        switch(answer.choice) {
-            case 'View all departments':
-                console.log(color, `User decided to: ${answer.choice}`);
-                prompt ( );
-            break;
-            case 'View all roles':
-                console.log(color, `User decided to: ${answer.choice}`);
-                prompt ( );
-            break;
-            case 'View all employees':
-                console.log(color, `User decided to: ${answer.choice}`);
-                prompt ( );
-            break;
-            case 'Add a department':
-                console.log(color, `User decided to: ${answer.choice}`);
-                prompt ( );
-            break;
-            case 'Add a role':
-                console.log(color, `User decided to: ${answer.choice}`);
-                prompt ( );
-            break;
-            case 'Add an employee':
-                console.log(color, `User decided to: ${answer.choice}`);
-                prompt ( );
-            break;
-            case 'Update an employee role':
-                console.log(color, `User decided to: ${answer.choice}`);
-                prompt ( );
-            break;
-            case 'Quit':
-                console.log(color, `User decided to: ${answer.choice}`);
-                return; // exit app if user decides to quit
-        };
 
+        if (answer.choice === 'Quit') {
+            console.log(color, `User decided to: ${answer.choice}`);
+            return;
+        } else {
+
+            // create obj to connect to mysql 
+            const connection = mysql.createConnection(sql,console.log(color, `Connected to the employees_db database.`)); 
+
+            // need to end connection after each query 
+            switch(answer.choice) {
+                case 'View all departments':
+                    console.log(color, `User decided to: ${answer.choice}`);
+                    connection.end();
+                    prompt ( );
+                break;
+                case 'View all roles':
+                    console.log(color, `User decided to: ${answer.choice}`);
+                    connection.end();
+                    prompt ( );
+                break;
+                case 'View all employees':
+                    console.log(color, `User decided to: ${answer.choice}`);
+                    connection.end();
+                    prompt ( );
+                break;
+                case 'Add a department':
+                    console.log(color, `User decided to: ${answer.choice}`);
+                    connection.end();
+                    prompt ( );
+                break;
+                case 'Add a role':
+                    console.log(color, `User decided to: ${answer.choice}`);
+                    connection.end();
+                    prompt ( );
+                break;
+                case 'Add an employee':
+                    console.log(color, `User decided to: ${answer.choice}`);
+                    connection.end();
+                    prompt ( );
+                break;
+                case 'Update an employee role':
+                    console.log(color, `User decided to: ${answer.choice}`);
+                    connection.end();
+                    prompt ( );
+                break;
+            };
+        };
         } catch (err) {
             console.log(err);
     }
