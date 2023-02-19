@@ -1,8 +1,9 @@
-// require mysql, inquirer, cTable
+// require inquirer, mysql, util, cTable
 const inquirer = require('./node_modules/inquirer');
 const mysql = require('./node_modules/mysql2');
 const util = require('./node_modules/util/util');
 const cTable = require('./node_modules/console.table');
+// mysql queries required from separate file
 const { CONNECTION_QUERY, DEPARTMENT_QUERY, ROLE_QUERY, EMPLOYEES_QUERY } = require('./queries/queries');
 
 // variables for display
@@ -12,6 +13,116 @@ const greeting = require('./assets/keyboard/art');
 // vars that will become connection objs
 let connection;
 let execQuery;
+
+// make query and display table in terminal
+async function displayTable (input) {
+    try {
+        await execQuery(input, (err, res) => {
+            if (err) {
+                console.error(err);
+            } else {
+                console.table(color,"     ", res, "     ");
+                prompt ( );
+            };
+    });
+    } catch (err) {
+        console.error(err);
+    };
+}
+
+// add new dept
+async function addDepartment ( ) {
+    try {
+        const answer = await inquirer.prompt([
+            {
+                type: 'input',
+                name: 'newDepartment',
+                message: 'Please enter the name of a new department:',
+            },
+        ]);
+        
+        await execQuery(`INSERT INTO employees_db.department_table (department_name)
+            VALUES 
+                ("${answer.newDepartment}");`, (err, res) => {
+                    if (err) {
+                        console.error(err);
+                    } else {
+                        console.log(color,`Added ${answer.newDepartment} to the database`);
+                        prompt ( );
+                    }
+            });
+        
+    } catch (err) {
+        console.error(err);
+    };
+};
+
+// add new role
+async function addRole ( ) {
+    try {
+        const answer = await inquirer.prompt([
+            {
+                type: 'input',
+                name: 'newRole',
+                message: 'Please enter the name of the new role:',
+            },
+            {
+                type: 'input',
+                name: 'newSalary',
+                message: 'Please enter the salary for the  new role:',
+            },
+            {
+                type: 'list',
+                name: 'newDepartmentChoice',
+                message: 'Please choose which department the new role belongs to:',
+                choices: ['Admin', 
+                        'Legal', 
+                        'Marketing',
+                        'Sales',
+                        'Maintenance',
+                        'Accounting']
+            },
+        ]);
+
+        // assign dept name to deptartment_id
+        switch (answer.newDepartmentChoice) {
+            case "Admin":
+                answer.newDepartmentChoice = 1;
+                break;
+            case "Legal":
+                answer.newDepartmentChoice = 2;
+                break;
+            case "Marketing":
+                answer.newDepartmentChoice = 3;
+                break;
+            case "Sales":
+                answer.newDepartmentChoice = 4;
+                break;
+            case "Maintenance":
+                answer.newDepartmentChoice = 5;
+                break;
+            case "Accounting":
+                answer.newDepartmentChoice = 6;
+                break;
+        };
+
+        await execQuery(`INSERT INTO employees_db.role_table (title, salary, department_id)
+            VALUES 
+                ("${answer.newRole}", "${answer.newSalary}", "${answer.newDepartmentChoice}");`
+                
+                , (err, res) => {
+                    if (err) {
+                        console.error(err);
+                    } else {
+                        console.log(color,`Added ${answer.newRole} to the database`);
+                        prompt ( );
+                    }
+            });
+        
+    } catch (err) {
+        console.error(err);
+    };
+};
 
 async function prompt ( ) {
     try {
@@ -42,55 +153,19 @@ async function prompt ( ) {
         // sql queries based on choice 
         switch(usersChoice) {
             case 'View all departments':
-                try {
-                    await execQuery(DEPARTMENT_QUERY, (err, res) => {
-                        if (err) {
-                            console.error(err);
-                        } else {
-                            console.table(color,"     ", res, "     ");
-                            prompt ( );
-                        };
-                });
-                } catch (err) {
-                    console.error(err);
-                };
+                displayTable (DEPARTMENT_QUERY);
                 break;
             case 'View all roles':
-                try {
-                    await execQuery(ROLE_QUERY, (err, res) => {
-                        if (err) {
-                            console.error(err);
-                        } else {
-                            console.table(color,"     ", res, "     ");
-                            prompt ( );
-                        };
-                });
-                } catch (err) {
-                    console.error(err);
-                };
-                prompt ( );
+                displayTable (ROLE_QUERY);
             break;
             case 'View all employees':
-                try {
-                    await execQuery(EMPLOYEES_QUERY, (err, res) => {
-                        if (err) {
-                            console.error(err);
-                        } else {
-                            console.table(color,"     ", res, "     ");
-                            prompt ( );
-                        };
-                });
-                } catch (err) {
-                    console.error(err);
-                };
+                displayTable (EMPLOYEES_QUERY);
             break;
             case 'Add a department':
-                console.log(color, `User decided to: ${usersChoice}`);
-                prompt ( );
+                addDepartment ( );
             break;
             case 'Add a role':
-                console.log(color, `User decided to: ${usersChoice}`);
-                prompt ( );
+                addRole ( );
             break;
             case 'Add an employee':
                 console.log(color, `User decided to: ${usersChoice}`);
@@ -101,11 +176,9 @@ async function prompt ( ) {
                 prompt ( );
             break;
             case 'Quit':
-                console.log(color, `User decided to: ${usersChoice}`);
                 connection.end();
                 return;
         };
-
     } catch (err) {
         console.log(err);
     };
@@ -116,6 +189,5 @@ function init ( ) {
     console.log(color , greeting);
     prompt();
 };
-
 
 init();

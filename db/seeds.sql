@@ -4,13 +4,13 @@ VALUES ("Admin"),
        ("Marketing"),
        ("Sales");
        
-INSERT INTO role_table (id, title, salary, department_id)
-VALUES (001, "Administrative Assistant", 60000, 1),
-       (002,"Sales Associate", 65000, 4),
-       (003, "Legal Intern", 100000, 2),
-       (004, "Sales Lead", 95000, 4),
-       (005, "Marketing Intern", 55000, 3),
-       (006, "Marketing Manager", 80000, 3);
+INSERT INTO role_table (title, salary, department_id)
+VALUES ("Administrative Assistant", 60000, 1),
+       ("Sales Associate", 65000, 4),
+       ("Legal Intern", 100000, 2),
+       ("Sales Lead", 95000, 4),
+       ("Marketing Intern", 55000, 3),
+       ("Marketing Manager", 80000, 3);
 
 SET FOREIGN_KEY_CHECKS = 0;
 
@@ -24,13 +24,13 @@ SET FOREIGN_KEY_CHECKS = 0;
 
 -- Null for those employees who do not have a manager at this time. --    
 
-INSERT INTO employee_table (id, first_name, last_name, role_id, manager_id)
-VALUES (001, "Adam", "Jones", 2, 2),
-       (002,"Carrie", "Reed", 4, Null),
-       (003, "Lois", "James", 1, Null),
-       (004, "Kyle", "Wilson", 3, Null),
-       (005, "Dan", "Smith", 6, Null),
-       (006, "Tom", "Arnold", 5, 5),
-       (007, "Trevor", "Blake", 2, 2);    
+INSERT INTO employee_table (first_name, last_name, role_id, manager_id)
+VALUES ("Adam", "Jones", 2, 2),
+       ("Carrie", "Reed", 4, Null),
+       ("Lois", "James", 1, Null),
+       ("Kyle", "Wilson", 3, Null),
+       ("Dan", "Smith", 6, Null),
+       ("Tom", "Arnold", 5, 5),
+       ("Trevor", "Blake", 2, 2);    
 
 SET FOREIGN_KEY_CHECKS = 1;

@@ -1,3 +1,4 @@
+// establish connection
 const CONNECTION_QUERY = {
     host: 'localhost',
     user: 'root',
@@ -5,8 +6,10 @@ const CONNECTION_QUERY = {
     database: 'employees_db'
 };
 
+// view all departments 
 const DEPARTMENT_QUERY = 'SELECT * FROM employees_db.department_table';
 
+// view all roles
 const ROLE_QUERY = `SELECT 
                       role_table.id, 
                       role_table.title, 
@@ -20,7 +23,6 @@ const ROLE_QUERY = `SELECT
                       employees_db.role_table.department_id = department_table.id`;
 
 // view all employees
-
 const EMPLOYEES_QUERY = `SELECT 
                           employee_table.id,
                           employee_table.first_name,
@@ -42,16 +44,18 @@ const EMPLOYEES_QUERY = `SELECT
                         ORDER BY employee_table.id
 `;
 
-// add a department
-  // prompt to enter a department that will be added to databse
+// // add a department
+// const ADD_DEPARTMENT = `
+
+// `;
 
 // add a role
   // prompt to enter name, salary, and department for a role
-  // add role is added to the database
+  // role is added to the database
 
 // add an employee 
   // prompt to enter the employees first name, last name, role, manager
-  // add employee to the database
+  // employee to the database
 
 // update an employee role
   // prompt to select and employee to update and their role
