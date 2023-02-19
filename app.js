@@ -108,7 +108,7 @@ async function addRole ( ) {
 
         await execQuery(`INSERT INTO employees_db.role_table (title, salary, department_id)
             VALUES 
-                ("${answer.newRole}", "${answer.newSalary}", "${answer.newDepartmentChoice}");`
+                ("${answer.newRole}", "${answer.newSalary}", ${answer.newDepartmentChoice});`
                 
                 , (err, res) => {
                     if (err) {
@@ -124,6 +124,109 @@ async function addRole ( ) {
     };
 };
 
+// add new employee
+async function addEmployee ( ) {
+    try {
+        const answer = await inquirer.prompt([
+            {
+                type: 'input',
+                name: 'newEmployeeFirstName',
+                message: 'Please enter first name of the new employee:',
+            },
+            {
+                type: 'input',
+                name: 'newEmployeeLastName',
+                message: 'Please enter last name of the new employee:',
+            },
+            {
+                type: 'list',
+                name: 'newEmployeeRole',
+                message: 'Please enter role of the new employee:',
+                choices: ['Administrative Assistant', 
+                        'Sales Associate', 
+                        'Legal Intern',
+                        'Sales Lead',
+                        'Marketing Intern',
+                        'Marketing Manager',
+                        'HVAC Specialist',
+                        'Janitor']
+            },
+            {
+                type: 'list',
+                name: 'newEmployeeManager',
+                message: 'Please enter the new employee\'s manager name:',
+                choices: ['None', 
+                        'Carrie Reed', 
+                        'Dan Smith',
+                        ]
+            },
+        ]);
+
+        // assign role name to role_id
+        switch (answer.newEmployeeRole) {
+            case "Administrative Assistant":
+                answer.newEmployeeRole = 1;
+                break;
+            case "Sales Associate":
+                answer.newEmployeeRole = 2;
+                break;
+            case "Legal Intern":
+                answer.newEmployeeRole = 3;
+                break;
+            case "Sales Lead":
+                answer.newEmployeeRole = 4;
+                break;
+            case "Marketing Intern":
+                answer.newEmployeeRole = 5;
+                break;
+            case "Marketing Manager":
+                answer.newEmployeeRole = 6;
+                break;
+            case "HVAC Specialist":
+                answer.newEmployeeRole = 7;
+                break;
+            case "Janitor":
+                answer.newEmployeeRole = 8;
+                break;
+        };
+
+        // assign manager name to manager_id
+        switch (answer.newEmployeeManager) {
+            case "None":
+                answer.newEmployeeManager = null;
+                break;
+            case "Carrie Reed":
+                answer.newEmployeeManager = 2;
+                break;
+            case "Dan Smith":
+                answer.newEmployeeManager = 5;
+                break;
+        };
+
+        await execQuery(`INSERT INTO employees_db.employee_table (first_name, last_name, role_id, manager_id)
+            VALUES 
+                ("${answer.newEmployeeFirstName}", "${answer.newEmployeeLastName}", ${answer.newEmployeeRole}, ${answer.newEmployeeManager});`
+                , (err, res) => {
+                    if (err) {
+                        console.error(err);
+                    } else {
+                        console.log(color,`Added ${answer.newEmployeeFirstName} ${answer.newEmployeeLastName} to the database`);
+                        prompt ( );
+                    }
+            });
+
+    } catch (err) {
+        console.error(err);
+    };
+};
+
+
+// update an employee role
+  // prompt to select and employee to update and their role
+  // this information is updated in a database
+
+
+// main prompt
 async function prompt ( ) {
     try {
         const answer = await inquirer.prompt([
@@ -168,8 +271,7 @@ async function prompt ( ) {
                 addRole ( );
             break;
             case 'Add an employee':
-                console.log(color, `User decided to: ${usersChoice}`);
-                prompt ( );
+                addEmployee ( );
             break;
             case 'Update an employee role':
                 console.log(color, `User decided to: ${usersChoice}`);

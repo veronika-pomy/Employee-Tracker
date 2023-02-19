@@ -7,7 +7,12 @@ const CONNECTION_QUERY = {
 };
 
 // view all departments 
-const DEPARTMENT_QUERY = 'SELECT * FROM employees_db.department_table';
+const DEPARTMENT_QUERY = `SELECT
+                            * 
+                          FROM 
+                            employees_db.department_table
+                          ORDER BY 
+                            department_table.id`;
 
 // view all roles
 const ROLE_QUERY = `SELECT 
@@ -20,7 +25,9 @@ const ROLE_QUERY = `SELECT
                     JOIN 
                       employees_db.department_table
                     ON 
-                      employees_db.role_table.department_id = department_table.id`;
+                      employees_db.role_table.department_id = department_table.id
+                    ORDER BY 
+                      role_table.id`;
 
 // view all employees
 const EMPLOYEES_QUERY = `SELECT 
@@ -41,24 +48,8 @@ const EMPLOYEES_QUERY = `SELECT
                           employees_db.department_table
                         ON 
                           employees_db.role_table.department_id = department_table.id
-                        ORDER BY employee_table.id
+                        ORDER BY 
+                          employee_table.id
 `;
-
-// // add a department
-// const ADD_DEPARTMENT = `
-
-// `;
-
-// add a role
-  // prompt to enter name, salary, and department for a role
-  // role is added to the database
-
-// add an employee 
-  // prompt to enter the employees first name, last name, role, manager
-  // employee to the database
-
-// update an employee role
-  // prompt to select and employee to update and their role
-  // this information is updated in a database
 
 module.exports = { CONNECTION_QUERY, DEPARTMENT_QUERY, ROLE_QUERY, EMPLOYEES_QUERY };
