@@ -4,20 +4,19 @@ const mysql = require('./node_modules/mysql2');
 const cTable = require('./node_modules/console.table');
 const query = require('./queries/queries'); // sql queries
 // variables for display
-const greenC = '\x1b[32m';
-const art = require('./assets/keyboard/art');
-
+const color = '\u001b[36m'; // cyan
+const greeting = require('./assets/keyboard/art');
 
 // connect to database
-const db = mysql.createConnection(
-    {
-      host: 'localhost',
-      user: 'root',
-      password: 'mysqlpass',
-      database: 'employees_db'
-    },
-    // console.log(greenC, `Connected to the employees_db database.`);
-  );
+// const db = mysql.createConnection(
+//     {
+//       host: 'localhost',
+//       user: 'root',
+//       password: 'mysqlpass',
+//       database: 'employees_db'
+//     },
+//     // console.log(color, `Connected to the employees_db database.`)
+//   );
 
 async function prompt ( ) {
     try {
@@ -37,8 +36,41 @@ async function prompt ( ) {
             },
         ]);
 
-        console.log(answer.choice);
-        // switch statement for different options for sql manipulation 
+        // sql queries based on choice 
+        
+        switch(answer.choice) {
+            case 'View all departments':
+                console.log(color, `User decided to: ${answer.choice}`);
+                prompt ( );
+            break;
+            case 'View all roles':
+                console.log(color, `User decided to: ${answer.choice}`);
+                prompt ( );
+            break;
+            case 'View all employees':
+                console.log(color, `User decided to: ${answer.choice}`);
+                prompt ( );
+            break;
+            case 'Add a department':
+                console.log(color, `User decided to: ${answer.choice}`);
+                prompt ( );
+            break;
+            case 'Add a role':
+                console.log(color, `User decided to: ${answer.choice}`);
+                prompt ( );
+            break;
+            case 'Add an employee':
+                console.log(color, `User decided to: ${answer.choice}`);
+                prompt ( );
+            break;
+            case 'Update an employee role':
+                console.log(color, `User decided to: ${answer.choice}`);
+                prompt ( );
+            break;
+            case 'Quit':
+                console.log(color, `User decided to: ${answer.choice}`);
+                return; // exit app if user decides to quit
+        };
 
         } catch (err) {
             console.log(err);
@@ -46,7 +78,7 @@ async function prompt ( ) {
 };
 
 function init ( ) {
-    console.log(greenC , art);
+    console.log(color , greeting);
     prompt();
 };
 
