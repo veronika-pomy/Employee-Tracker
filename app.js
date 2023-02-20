@@ -4,7 +4,13 @@ const mysql = require('./node_modules/mysql2');
 const util = require('./node_modules/util/util');
 const cTable = require('./node_modules/console.table');
 // mysql queries required from separate file
-const { CONNECTION_QUERY, DEPARTMENT_QUERY, ROLE_QUERY, EMPLOYEES_QUERY } = require('./queries/queries');
+const { CONNECTION_QUERY, 
+        DEPARTMENT_QUERY,
+        ROLE_QUERY, 
+        EMPLOYEES_QUERY, 
+        ADD_DEPARTMENT,
+        ADD_ROLE,
+        ADD_EMPLOYEE } = require('./assets/js/queries');
 
 // variables for display
 const color = '\u001b[36m'; // cyan
@@ -28,10 +34,10 @@ async function displayTable (input) {
     } catch (err) {
         console.error(err);
     };
-}
+};
 
 // add new dept
-async function addDepartment ( ) {
+async function addDepartment (input) {
     try {
         const answer = await inquirer.prompt([
             {
@@ -41,9 +47,7 @@ async function addDepartment ( ) {
             },
         ]);
         
-        await execQuery(`INSERT INTO employees_db.department_table (department_name)
-            VALUES 
-                ("${answer.newDepartment}");`, (err, res) => {
+        await execQuery( input + `("${answer.newDepartment}");`, (err, res) => {
                     if (err) {
                         console.error(err);
                     } else {
@@ -58,7 +62,7 @@ async function addDepartment ( ) {
 };
 
 // add new role
-async function addRole ( ) {
+async function addRole (input) {
     try {
         const answer = await inquirer.prompt([
             {
@@ -80,7 +84,8 @@ async function addRole ( ) {
                         'Marketing',
                         'Sales',
                         'Maintenance',
-                        'Accounting']
+                        'Accounting',
+                        'Compliance']
             },
         ]);
 
@@ -99,17 +104,19 @@ async function addRole ( ) {
                 answer.newDepartmentChoice = 4;
                 break;
             case "Maintenance":
-                answer.newDepartmentChoice = 5;
+                answer.newDepartmentChoice = 7;
                 break;
             case "Accounting":
                 answer.newDepartmentChoice = 6;
                 break;
+            case "Compliance":
+                answer.newDepartmentChoice = 5;
+                break;
         };
 
-        await execQuery(`INSERT INTO employees_db.role_table (title, salary, department_id)
-            VALUES 
-                ("${answer.newRole}", "${answer.newSalary}", ${answer.newDepartmentChoice});`
-                
+        await execQuery( input +    `("${answer.newRole}", 
+                                    "${answer.newSalary}", 
+                                    ${answer.newDepartmentChoice}); `             
                 , (err, res) => {
                     if (err) {
                         console.error(err);
@@ -125,7 +132,7 @@ async function addRole ( ) {
 };
 
 // add new employee
-async function addEmployee ( ) {
+async function addEmployee (input) {
     try {
         const answer = await inquirer.prompt([
             {
@@ -149,7 +156,8 @@ async function addEmployee ( ) {
                         'Marketing Intern',
                         'Marketing Manager',
                         'HVAC Specialist',
-                        'Janitor']
+                        'Janitor',
+                        'Compliance Officer']
             },
             {
                 type: 'list',
@@ -186,6 +194,9 @@ async function addEmployee ( ) {
                 answer.newEmployeeRole = 7;
                 break;
             case "Janitor":
+                answer.newEmployeeRole = 9;
+                break;
+            case "Compliance Officer":
                 answer.newEmployeeRole = 8;
                 break;
         };
@@ -203,9 +214,10 @@ async function addEmployee ( ) {
                 break;
         };
 
-        await execQuery(`INSERT INTO employees_db.employee_table (first_name, last_name, role_id, manager_id)
-            VALUES 
-                ("${answer.newEmployeeFirstName}", "${answer.newEmployeeLastName}", ${answer.newEmployeeRole}, ${answer.newEmployeeManager});`
+        await execQuery( input +    `("${answer.newEmployeeFirstName}", 
+                                    "${answer.newEmployeeLastName}", 
+                                    ${answer.newEmployeeRole}, 
+                                    ${answer.newEmployeeManager});`
                 , (err, res) => {
                     if (err) {
                         console.error(err);
@@ -255,7 +267,7 @@ async function prompt ( ) {
         // sql queries based on choice 
         switch(usersChoice) {
             case 'View all departments':
-                displayTable (DEPARTMENT_QUERY);
+                displayTable(DEPARTMENT_QUERY);
                 break;
             case 'View all roles':
                 displayTable (ROLE_QUERY);
@@ -264,13 +276,13 @@ async function prompt ( ) {
                 displayTable (EMPLOYEES_QUERY);
             break;
             case 'Add a department':
-                addDepartment ( );
+                addDepartment (ADD_DEPARTMENT);
             break;
             case 'Add a role':
-                addRole ( );
+                addRole (ADD_ROLE);
             break;
             case 'Add an employee':
-                addEmployee ( );
+                addEmployee (ADD_EMPLOYEE);
             break;
             case 'Update an employee role':
                 console.log(color, `User decided to: ${usersChoice}`);

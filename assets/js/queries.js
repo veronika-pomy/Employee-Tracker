@@ -58,4 +58,32 @@ const EMPLOYEES_QUERY = `SELECT
                                 e.id;
 `;
 
-module.exports = { CONNECTION_QUERY, DEPARTMENT_QUERY, ROLE_QUERY, EMPLOYEES_QUERY };
+// add a new department
+const ADD_DEPARTMENT = `INSERT INTO 
+                                department_table (department_name)
+                        VALUES
+`;
+
+// add a role 
+const ADD_ROLE = `INSERT INTO
+                                role_table (title, salary, department_id)
+                VALUES
+`;
+
+// add an employee
+const ADD_EMPLOYEE = `INSERT INTO 
+                                employee_table (first_name, last_name, role_id, manager_id)
+                        VALUES          
+`;
+
+// update employee
+
+module.exports = { 
+        CONNECTION_QUERY, 
+        DEPARTMENT_QUERY, 
+        ROLE_QUERY, 
+        EMPLOYEES_QUERY, 
+        ADD_DEPARTMENT, 
+        ADD_ROLE, 
+        ADD_EMPLOYEE 
+};
