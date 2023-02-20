@@ -76,8 +76,6 @@ const ADD_EMPLOYEE = `INSERT INTO
                         VALUES          
 `;
 
-// update employee
-
 module.exports = { 
         CONNECTION_QUERY, 
         DEPARTMENT_QUERY, 
@@ -85,5 +83,5 @@ module.exports = {
         EMPLOYEES_QUERY, 
         ADD_DEPARTMENT, 
         ADD_ROLE, 
-        ADD_EMPLOYEE 
+        ADD_EMPLOYEE
 };

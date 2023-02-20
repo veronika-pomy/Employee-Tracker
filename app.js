@@ -10,7 +10,8 @@ const { CONNECTION_QUERY,
         EMPLOYEES_QUERY, 
         ADD_DEPARTMENT,
         ADD_ROLE,
-        ADD_EMPLOYEE } = require('./assets/js/queries');
+        ADD_EMPLOYEE,
+        UPDATE_ROLE } = require('./assets/js/queries');
 
 // variables for display
 const color = '\u001b[36m'; // cyan
@@ -231,11 +232,116 @@ async function addEmployee (input) {
     };
 };
 
-
 // update an employee role
   // prompt to select and employee to update and their role
   // this information is updated in a database
+  async function updateEmployeeRole ( ) {
+    try {
+        const answer = await inquirer.prompt([
+            {
+                type: 'list',
+                name: 'updateEmployeeName',
+                message: 'Please enter which employee\'s role you\'d like to update:',
+                choices: ['Adam Jones',
+                        'Carrie Reed',
+                        'Lois James',
+                        'Kyle Wilson',
+                        'Dan Smith',
+                        'Tom Arnold',
+                        'Trevor Blake',
+                        'Kim Well']
+            },
+            {
+                type: 'list',
+                name: 'updateEmployeeRole',
+                message: 'Please enter which role you\'d like to assign to the selected employee:',
+                choices: ['Administrative Assistant', 
+                        'Sales Associate', 
+                        'Legal Intern',
+                        'Sales Lead',
+                        'Marketing Intern',
+                        'Marketing Manager',
+                        'HVAC Specialist',
+                        'Janitor',
+                        'Compliance Officer']
+            },
+        ]);
 
+        // assign emplyee name to an id
+        switch (answer.updateEmployeeName) {
+            case "Adam Jones":
+                answer.updateEmployeeName = 1;
+                break;
+            case "Carrie Reed":
+                answer.updateEmployeeName = 2;
+                break;
+            case "Lois James":
+                answer.updateEmployeeName = 3;
+                break;
+            case "Kyle Wilson":
+                answer.updateEmployeeName = 4;
+                break;
+            case "Dan Smith":
+                answer.updateEmployeeName = 5;
+                break;
+            case "Tom Arnold":
+                answer.updateEmployeeName = 6;
+                break;
+            case "Trevor Blake":
+                answer.updateEmployeeName = 7;
+                break;
+            case "Kim Well":
+                answer.updateEmployeeName = 8;
+                break;
+        };
+
+        // assign role name to role_id
+        switch (answer.updateEmployeeRole) {
+            case "Administrative Assistant":
+                answer.updateEmployeeRole = 1;
+                break;
+            case "Sales Associate":
+                answer.updateEmployeeRole = 2;
+                break;
+            case "Legal Intern":
+                answer.updateEmployeeRole = 3;
+                break;
+            case "Sales Lead":
+                answer.updateEmployeeRole = 4;
+                break;
+            case "Marketing Intern":
+                answer.updateEmployeeRole = 5;
+                break;
+            case "Marketing Manager":
+                answer.updateEmployeeRole = 6;
+                break;
+            case "HVAC Specialist":
+                answer.updateEmployeeRole = 7;
+                break;
+            case "Janitor":
+                answer.updateEmployeeRole = 9;
+                break;
+            case "Compliance Officer":
+                answer.updateEmployeeRole = 8;
+                break;
+        };
+
+        await execQuery(`UPDATE employee_table
+                        SET role_id = ${answer.updateEmployeeRole}
+                        WHERE id = ${answer.updateEmployeeName}
+        `
+                , (err, res) => {
+                    if (err) {
+                        console.error(err);
+                    } else {
+                        console.log(color,`Updated employee role.`);
+                        prompt ( );
+                    }
+            });
+    } catch (err) {
+        console.error(err);
+    };
+};
 
 // main prompt
 async function prompt ( ) {
@@ -285,8 +391,7 @@ async function prompt ( ) {
                 addEmployee (ADD_EMPLOYEE);
             break;
             case 'Update an employee role':
-                console.log(color, `User decided to: ${usersChoice}`);
-                prompt ( );
+                updateEmployeeRole ( );
             break;
             case 'Quit':
                 connection.end();
