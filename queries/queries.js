@@ -8,48 +8,54 @@ const CONNECTION_QUERY = {
 
 // view all departments 
 const DEPARTMENT_QUERY = `SELECT
-                            * 
+                                  * 
                           FROM 
-                            employees_db.department_table
+                                  department_table
                           ORDER BY 
-                            department_table.id`;
+                                  department_table.id;
+`;
 
 // view all roles
 const ROLE_QUERY = `SELECT 
-                      role_table.id, 
-                      role_table.title, 
-                      department_table.department_name, 
-                      role_table.salary
+                                  role_table.id, 
+                                  role_table.title, 
+                                  department_table.department_name, 
+                                  role_table.salary
                     FROM 
-                      employees_db.role_table 
+                                  role_table 
                     JOIN 
-                      employees_db.department_table
+                                  department_table
                     ON 
-                      employees_db.role_table.department_id = department_table.id
+                                  role_table.department_id = department_table.id
                     ORDER BY 
-                      role_table.id`;
+                                  role_table.id;
+`;
 
 // view all employees
 const EMPLOYEES_QUERY = `SELECT 
-                          employee_table.id,
-                          employee_table.first_name,
-                          employee_table.last_name,
-                          role_table.title,
-                          department_table.department_name,
-                          role_table.salary,
-                          employee_table.manager_id as manager_name
+                                  e.id as employee_id,
+                                  e.first_name as employee_first_name,
+                                  e.last_name as employee_last_name,
+                                  role_table.title as employee_role,
+                                  department_table.department_name as employee_department,
+                                  role_table.salary as employee_salary,
+                                  CONCAT(m.first_name, ' ', m.last_name) as employee_manager
                         FROM 
-                          employees_db.employee_table 
+                                  employee_table e
+                        LEFT JOIN 
+                                  employee_table m
+                        ON 
+                                  e.manager_id = m.id
                         JOIN
-                          employees_db.role_table
+                                role_table
                         ON 
-                          employees_db.employee_table.role_id = role_table.id
+                                e.role_id = role_table.id
                         JOIN 
-                          employees_db.department_table
+                                department_table
                         ON 
-                          employees_db.role_table.department_id = department_table.id
+                                role_table.department_id = department_table.id
                         ORDER BY 
-                          employee_table.id
+                                e.id;
 `;
 
 module.exports = { CONNECTION_QUERY, DEPARTMENT_QUERY, ROLE_QUERY, EMPLOYEES_QUERY };

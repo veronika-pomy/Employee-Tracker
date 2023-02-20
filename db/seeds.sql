@@ -12,25 +12,17 @@ VALUES ("Administrative Assistant", 60000, 1),
        ("Marketing Intern", 55000, 3),
        ("Marketing Manager", 80000, 3);
 
+-- Temporarily disabling referential constraints to insert manager_id data into employee_table--    
 SET FOREIGN_KEY_CHECKS = 0;
-
--- Temporarily disabling referential constraints (set FOREIGN_KEY_CHECKS to 0) is useful when you need to re-create the tables and load data in any parent-child order.
-
--- Without this option, it may require a lot of effort to define the correct parent-child order especially if you have a lot of tables, and a table can be a parent for some tables, and a child for others.
-
--- But as a result, you can insert data that violate foreign key constraints, and when you enable the referential constraints (set FOREIGN_KEY_CHECKS to 1), MySQL does not re-validate the inserted rows.
-
--- As an alternative, you can firstly create tables without foreign key constraints, load data and then create foreign keys using ALTER TABLE statements.
-
--- Null for those employees who do not have a manager at this time. --    
 
 INSERT INTO employee_table (first_name, last_name, role_id, manager_id)
 VALUES ("Adam", "Jones", 2, 2),
-       ("Carrie", "Reed", 4, Null),
-       ("Lois", "James", 1, Null),
-       ("Kyle", "Wilson", 3, Null),
-       ("Dan", "Smith", 6, Null),
+       ("Carrie", "Reed", 4, null),
+       ("Lois", "James", 1, null),
+       ("Kyle", "Wilson", 3, null),
+       ("Dan", "Smith", 6, null),
        ("Tom", "Arnold", 5, 5),
-       ("Trevor", "Blake", 2, 2);    
+       ("Trevor", "Blake", 2, 2);
 
+-- Enabling referential constraints -- 
 SET FOREIGN_KEY_CHECKS = 1;

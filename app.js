@@ -214,7 +214,6 @@ async function addEmployee ( ) {
                         prompt ( );
                     }
             });
-
     } catch (err) {
         console.error(err);
     };
