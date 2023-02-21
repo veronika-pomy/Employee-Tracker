@@ -10,8 +10,7 @@ const { CONNECTION_QUERY,
         EMPLOYEES_QUERY, 
         ADD_DEPARTMENT,
         ADD_ROLE,
-        ADD_EMPLOYEE,
-        UPDATE_ROLE } = require('./assets/js/queries');
+        ADD_EMPLOYEE} = require('./assets/js/queries');
 
 // variables for display
 const color = '\u001b[36m'; // cyan
@@ -65,60 +64,47 @@ async function addDepartment (input) {
 // add new role
 async function addRole (input) {
     try {
-        const answer = await inquirer.prompt([
-            {
-                type: 'input',
-                name: 'newRole',
-                message: 'Please enter the name of the new role:',
-            },
-            {
-                type: 'input',
-                name: 'newSalary',
-                message: 'Please enter the salary for the  new role:',
-            },
-            {
-                type: 'list',
-                name: 'newDepartmentChoice',
-                message: 'Please choose which department the new role belongs to:',
-                choices: ['Admin', 
-                        'Legal', 
-                        'Marketing',
-                        'Sales',
-                        'Maintenance',
-                        'Accounting',
-                        'Compliance']
-            },
-        ]);
+        await execQuery(`SELECT
+                                department_name
+                        FROM 
+                                department_table
+                        ORDER BY 
+                                department_table.id;`
+        , (err, res) => {
+            if (err) {
+                console.error(err);
+            } else {
+                // console.table(color,"     ", res, "     ");
+                let arrayRole = [];
+                
+                for (let i = 0; i < res.length; i++){
+                    arrayRole.push(res[i].department_name);
+                };
 
-        // assign dept name to deptartment_id
-        switch (answer.newDepartmentChoice) {
-            case "Admin":
-                answer.newDepartmentChoice = 1;
-                break;
-            case "Legal":
-                answer.newDepartmentChoice = 2;
-                break;
-            case "Marketing":
-                answer.newDepartmentChoice = 3;
-                break;
-            case "Sales":
-                answer.newDepartmentChoice = 4;
-                break;
-            case "Maintenance":
-                answer.newDepartmentChoice = 7;
-                break;
-            case "Accounting":
-                answer.newDepartmentChoice = 6;
-                break;
-            case "Compliance":
-                answer.newDepartmentChoice = 5;
-                break;
-        };
-
-        await execQuery( input +    `("${answer.newRole}", 
+                const answer = inquirer.prompt([
+                    {
+                        type: 'input',
+                        name: 'newRole',
+                        message: 'Please enter the name of the new role:',
+                    },
+                    {
+                        type: 'input',
+                        name: 'newSalary',
+                        message: 'Please enter the salary for the  new role:',
+                    },
+                    {
+                        type: 'list',
+                        name: 'newDepartmentChoice',
+                        message: 'Please choose which department the new role belongs to:',
+                        choices: arrayRole
+                    },
+                ])
+                .then((answer) => {
+                    const deptId = arrayRole.indexOf(answer.newDepartmentChoice);
+                    execQuery( input +    `("${answer.newRole}", 
                                     "${answer.newSalary}", 
-                                    ${answer.newDepartmentChoice}); `             
-                , (err, res) => {
+                                    "${deptId}"); `             
+                    , (err, res) => {
                     if (err) {
                         console.error(err);
                     } else {
@@ -126,6 +112,9 @@ async function addRole (input) {
                         prompt ( );
                     }
             });
+                });
+            };
+        });
         
     } catch (err) {
         console.error(err);
@@ -232,9 +221,7 @@ async function addEmployee (input) {
     };
 };
 
-// update an employee role
-  // prompt to select and employee to update and their role
-  // this information is updated in a database
+// update employee role
   async function updateEmployeeRole ( ) {
     try {
         const answer = await inquirer.prompt([
