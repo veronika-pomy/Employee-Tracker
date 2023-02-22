@@ -1,4 +1,4 @@
-const art = 
+const greeting = 
 `
 
 
@@ -17,6 +17,8 @@ const art =
 
 
 
-`
+`;
 
- module.exports = art;
+const color = '\u001b[36m'; // cyan
+
+ module.exports = { greeting, color };

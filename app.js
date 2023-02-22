@@ -13,12 +13,15 @@ const { CONNECTION_QUERY,
         ADD_EMPLOYEE} = require('./assets/js/queries');
 
 // variables for display
-const color = '\u001b[36m'; // cyan
-const greeting = require('./assets/keyboard/art');
+const { greeting, color } = require('./assets/js/greeting');
 
 // vars that will become connection objs
 let connection;
 let execQuery;
+// arrays that will be used to hold queries from databases that will be used in drop down prompts
+let arrayDepartment = [];
+let arrayRole = [];
+let arrayEmployeeName = [];
 
 // make query and display table in terminal
 async function displayTable (input) {
@@ -51,7 +54,7 @@ async function addDepartment (input) {
                     if (err) {
                         console.error(err);
                     } else {
-                        console.log(color,`Added ${answer.newDepartment} to the database`);
+                        console.log(color,`Added ${answer.newDepartment} to the database.`);
                         prompt ( );
                     }
             });
@@ -64,58 +67,59 @@ async function addDepartment (input) {
 // add new role
 async function addRole (input) {
     try {
-        await execQuery(`SELECT
-                                department_name
+        execQuery(`SELECT
+                            department_name
                         FROM 
-                                department_table
+                            department_table
                         ORDER BY 
-                                department_table.id;`
+                            department_table.id;`
         , (err, res) => {
             if (err) {
                 console.error(err);
             } else {
-                // console.table(color,"     ", res, "     ");
-                let arrayRole = [];
-                
                 for (let i = 0; i < res.length; i++){
-                    arrayRole.push(res[i].department_name);
+                    arrayDepartment.push(res[i].department_name);
                 };
-
-                const answer = inquirer.prompt([
-                    {
-                        type: 'input',
-                        name: 'newRole',
-                        message: 'Please enter the name of the new role:',
-                    },
-                    {
-                        type: 'input',
-                        name: 'newSalary',
-                        message: 'Please enter the salary for the  new role:',
-                    },
-                    {
-                        type: 'list',
-                        name: 'newDepartmentChoice',
-                        message: 'Please choose which department the new role belongs to:',
-                        choices: arrayRole
-                    },
-                ])
-                .then((answer) => {
-                    const deptId = arrayRole.indexOf(answer.newDepartmentChoice);
-                    execQuery( input +    `("${answer.newRole}", 
-                                    "${answer.newSalary}", 
-                                    "${deptId}"); `             
-                    , (err, res) => {
-                    if (err) {
-                        console.error(err);
-                    } else {
-                        console.log(color,`Added ${answer.newRole} to the database`);
-                        prompt ( );
-                    }
-            });
-                });
             };
         });
-        
+
+        const answer = inquirer.prompt([
+            {
+                type: 'input',
+                name: 'newRole',
+                message: 'Please enter the name of the new role:',
+            },
+            {
+                type: 'input',
+                name: 'newSalary',
+                message: 'Please enter the salary for the  new role:',
+            },
+            {
+                type: 'list',
+                name: 'newDepartmentChoice',
+                message: 'Please choose which department the new role belongs to:',
+                choices: arrayDepartment
+            },
+        ])
+        .then((answer) => {
+            // assign deptartment_id as deptId
+            const deptId = arrayDepartment.indexOf(answer.newDepartmentChoice)+1;
+            execQuery( input + `("${answer.newRole}", 
+                                "${answer.newSalary}", 
+                                "${deptId}"); `             
+            , (err, res) => {
+            if (err) {
+                console.error(err);
+            } else {
+                console.log(color,`Added ${answer.newRole} to the database.`);
+
+                //reset array to reuse
+                arrayDepartment = [];
+
+                prompt ( );
+            }
+    });
+        });
     } catch (err) {
         console.error(err);
     };
@@ -124,7 +128,40 @@ async function addRole (input) {
 // add new employee
 async function addEmployee (input) {
     try {
-        const answer = await inquirer.prompt([
+        execQuery(`SELECT
+                                title
+                        FROM 
+                                role_table
+                        ORDER BY 
+                                role_table.id;`
+        , (err, res) => {
+            if (err) {
+                console.error(err);
+            } else {
+                
+                for (let i = 0; i < res.length; i++){
+                    arrayRole.push(res[i].title);
+                };
+            };
+        });
+
+        execQuery(`SELECT
+                        CONCAT(first_name, ' ', last_name) as employee
+                    FROM 
+                                employee_table
+                    ORDER BY 
+                                employee_table.id;`
+                , (err, res) => {
+                    if (err) {
+                        console.error(err);
+                    } else {
+                        for (let i = 0; i < res.length; i++){
+                            arrayEmployeeName.push(res[i].employee);
+                        };
+                };
+            });
+
+        const answer = inquirer.prompt([
             {
                 type: 'input',
                 name: 'newEmployeeFirstName',
@@ -139,192 +176,125 @@ async function addEmployee (input) {
                 type: 'list',
                 name: 'newEmployeeRole',
                 message: 'Please enter role of the new employee:',
-                choices: ['Administrative Assistant', 
-                        'Sales Associate', 
-                        'Legal Intern',
-                        'Sales Lead',
-                        'Marketing Intern',
-                        'Marketing Manager',
-                        'HVAC Specialist',
-                        'Janitor',
-                        'Compliance Officer']
+                choices: arrayRole
             },
             {
                 type: 'list',
                 name: 'newEmployeeManager',
                 message: 'Please enter the new employee\'s manager name:',
-                choices: ['None', 
-                        'Carrie Reed', 
-                        'Dan Smith',
-                        ]
-            },
-        ]);
+                choices: arrayEmployeeName
+            }
+        ])
+        .then((answer) => {
+            // assign role name to role_id
+            const roleId = arrayRole.indexOf(answer.newEmployeeRole)+1;
+            // assign employee_id name as managerId
+            const managerId = arrayEmployeeName.indexOf(answer.newEmployeeManager)+1;
 
-        // assign role name to role_id
-        switch (answer.newEmployeeRole) {
-            case "Administrative Assistant":
-                answer.newEmployeeRole = 1;
-                break;
-            case "Sales Associate":
-                answer.newEmployeeRole = 2;
-                break;
-            case "Legal Intern":
-                answer.newEmployeeRole = 3;
-                break;
-            case "Sales Lead":
-                answer.newEmployeeRole = 4;
-                break;
-            case "Marketing Intern":
-                answer.newEmployeeRole = 5;
-                break;
-            case "Marketing Manager":
-                answer.newEmployeeRole = 6;
-                break;
-            case "HVAC Specialist":
-                answer.newEmployeeRole = 7;
-                break;
-            case "Janitor":
-                answer.newEmployeeRole = 9;
-                break;
-            case "Compliance Officer":
-                answer.newEmployeeRole = 8;
-                break;
-        };
-
-        // assign manager name to manager_id
-        switch (answer.newEmployeeManager) {
-            case "None":
-                answer.newEmployeeManager = null;
-                break;
-            case "Carrie Reed":
-                answer.newEmployeeManager = 2;
-                break;
-            case "Dan Smith":
-                answer.newEmployeeManager = 5;
-                break;
-        };
-
-        await execQuery( input +    `("${answer.newEmployeeFirstName}", 
+            execQuery( input +    `("${answer.newEmployeeFirstName}", 
                                     "${answer.newEmployeeLastName}", 
-                                    ${answer.newEmployeeRole}, 
-                                    ${answer.newEmployeeManager});`
-                , (err, res) => {
-                    if (err) {
-                        console.error(err);
-                    } else {
-                        console.log(color,`Added ${answer.newEmployeeFirstName} ${answer.newEmployeeLastName} to the database`);
-                        prompt ( );
-                    }
-            });
+                                    ${roleId}, 
+                                    ${managerId});`
+                    , (err, res) => {
+                        if (err) {
+                            console.error(err);
+                        } else {
+                            console.log(color,`Added ${answer.newEmployeeFirstName} ${answer.newEmployeeLastName} to the database.`);
+
+                            // reset arrays to reuse
+                            arrayEmployeeName = [];
+                            arrayRole = [];
+                            prompt ( );
+                        }
+                    });
+        });
     } catch (err) {
         console.error(err);
     };
 };
 
+
+
+function updateName (updateArrayName) {
+
+                    execQuery(`SELECT
+                    CONCAT(first_name, ' ', last_name) as employee
+                FROM 
+                    employee_table
+                ORDER BY 
+                    employee_table.id;`
+                , (err, res) => {
+                if (err) {
+                    console.error(err);
+                } else {
+                    for (let i = 0; i < res.length; i++){
+                        updateArrayName.push(res[i].employee);
+                    };
+                    return updateArrayName;
+                };
+                });
+}; 
+
+function updateRole (updateArrayRole) {
+                execQuery(`SELECT
+                title
+            FROM 
+                role_table
+            ORDER BY 
+                role_table.id;`
+            , (err, res) => {
+            if (err) {
+            console.error(err);
+            } else {
+
+            for (let i = 0; i < res.length; i++){
+                updateArrayRole.push(res[i].title);
+            };
+            return updateArrayRole;
+            };
+            });
+}; 
+
 // update employee role
-  async function updateEmployeeRole ( ) {
+async function updateEmployeeRole ( ) {
     try {
-        const answer = await inquirer.prompt([
+
+        let updateArrayName = [];
+        let updateArrayRole = [];
+
+        const answer = inquirer.prompt([
             {
                 type: 'list',
                 name: 'updateEmployeeName',
                 message: 'Please enter which employee\'s role you\'d like to update:',
-                choices: ['Adam Jones',
-                        'Carrie Reed',
-                        'Lois James',
-                        'Kyle Wilson',
-                        'Dan Smith',
-                        'Tom Arnold',
-                        'Trevor Blake',
-                        'Kim Well']
+                choices: [updateRole (updateArrayRole)]
             },
             {
                 type: 'list',
                 name: 'updateEmployeeRole',
                 message: 'Please enter which role you\'d like to assign to the selected employee:',
-                choices: ['Administrative Assistant', 
-                        'Sales Associate', 
-                        'Legal Intern',
-                        'Sales Lead',
-                        'Marketing Intern',
-                        'Marketing Manager',
-                        'HVAC Specialist',
-                        'Janitor',
-                        'Compliance Officer']
+                choices: updateName (updateArrayName)
             },
-        ]);
+        ])
+        .then((answer) => {
+            // assign role name to role_id
+            const roleIdUpdate = updateArrayRole.indexOf(answer.updateEmployeeRole)+1;
+            // assign employee_id name as managerId
+            const employeeNameIdUpdate = updateArrayName.indexOf(answer.updateEmployeeName)+1;
 
-        // assign emplyee name to an id
-        switch (answer.updateEmployeeName) {
-            case "Adam Jones":
-                answer.updateEmployeeName = 1;
-                break;
-            case "Carrie Reed":
-                answer.updateEmployeeName = 2;
-                break;
-            case "Lois James":
-                answer.updateEmployeeName = 3;
-                break;
-            case "Kyle Wilson":
-                answer.updateEmployeeName = 4;
-                break;
-            case "Dan Smith":
-                answer.updateEmployeeName = 5;
-                break;
-            case "Tom Arnold":
-                answer.updateEmployeeName = 6;
-                break;
-            case "Trevor Blake":
-                answer.updateEmployeeName = 7;
-                break;
-            case "Kim Well":
-                answer.updateEmployeeName = 8;
-                break;
-        };
+            execQuery(`UPDATE employee_table
+                SET role_id = ${roleIdUpdate}
+                WHERE id = ${employeeNameIdUpdate}`
+                    , (err, res) => {
+                        if (err) {
+                            console.error(err);
+                        } else {
+                            console.log(color,`Updated role for employee: ${answer.updateEmployeeName}.`);
+                            prompt ( );
+                        }
+                    });
+        });
 
-        // assign role name to role_id
-        switch (answer.updateEmployeeRole) {
-            case "Administrative Assistant":
-                answer.updateEmployeeRole = 1;
-                break;
-            case "Sales Associate":
-                answer.updateEmployeeRole = 2;
-                break;
-            case "Legal Intern":
-                answer.updateEmployeeRole = 3;
-                break;
-            case "Sales Lead":
-                answer.updateEmployeeRole = 4;
-                break;
-            case "Marketing Intern":
-                answer.updateEmployeeRole = 5;
-                break;
-            case "Marketing Manager":
-                answer.updateEmployeeRole = 6;
-                break;
-            case "HVAC Specialist":
-                answer.updateEmployeeRole = 7;
-                break;
-            case "Janitor":
-                answer.updateEmployeeRole = 9;
-                break;
-            case "Compliance Officer":
-                answer.updateEmployeeRole = 8;
-                break;
-        };
-
-        await execQuery(`UPDATE employee_table
-                        SET role_id = ${answer.updateEmployeeRole}
-                        WHERE id = ${answer.updateEmployeeName}
-        `
-                , (err, res) => {
-                    if (err) {
-                        console.error(err);
-                    } else {
-                        console.log(color,`Updated employee role.`);
-                        prompt ( );
-                    }
-            });
     } catch (err) {
         console.error(err);
     };
