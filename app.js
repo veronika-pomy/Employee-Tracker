@@ -213,67 +213,56 @@ async function addEmployee (input) {
     };
 };
 
-
-
-function updateName (updateArrayName) {
-
-                    execQuery(`SELECT
-                    CONCAT(first_name, ' ', last_name) as employee
-                FROM 
-                    employee_table
-                ORDER BY 
-                    employee_table.id;`
-                , (err, res) => {
-                if (err) {
-                    console.error(err);
-                } else {
-                    for (let i = 0; i < res.length; i++){
-                        updateArrayName.push(res[i].employee);
-                    };
-                    return updateArrayName;
-                };
-                });
-}; 
-
-function updateRole (updateArrayRole) {
-                execQuery(`SELECT
-                title
-            FROM 
-                role_table
-            ORDER BY 
-                role_table.id;`
-            , (err, res) => {
-            if (err) {
-            console.error(err);
-            } else {
-
-            for (let i = 0; i < res.length; i++){
-                updateArrayRole.push(res[i].title);
-            };
-            return updateArrayRole;
-            };
-            });
-}; 
+let updateArrayName = [];
+let updateArrayRole = [];
 
 // update employee role
 async function updateEmployeeRole ( ) {
     try {
-
-        let updateArrayName = [];
-        let updateArrayRole = [];
+        execQuery(`SELECT
+                        CONCAT(first_name, ' ', last_name) as employee
+                    FROM 
+                        employee_table
+                    ORDER BY 
+                        employee_table.id;`
+            , (err, res) => {
+            if (err) {
+                console.error(err);
+            } else {
+                for (let i = 0; i < res.length; i++){
+                    updateArrayName.push(res[i].employee);
+                };
+            };
+        });
+        
+        execQuery(`SELECT
+                        title
+                    FROM 
+                        role_table
+                    ORDER BY 
+                        role_table.id;`
+            , (err, res) => {
+            if (err) {
+                console.error(err);
+            } else {
+                for (let i = 0; i < res.length; i++){
+                    updateArrayRole.push(res[i].title);
+                };
+            };
+        });
 
         const answer = inquirer.prompt([
             {
                 type: 'list',
                 name: 'updateEmployeeName',
                 message: 'Please enter which employee\'s role you\'d like to update:',
-                choices: [updateRole (updateArrayRole)]
+                choices: updateArrayRole
             },
             {
                 type: 'list',
                 name: 'updateEmployeeRole',
                 message: 'Please enter which role you\'d like to assign to the selected employee:',
-                choices: updateName (updateArrayName)
+                choices: updateArrayRole
             },
         ])
         .then((answer) => {
@@ -282,9 +271,12 @@ async function updateEmployeeRole ( ) {
             // assign employee_id name as managerId
             const employeeNameIdUpdate = updateArrayName.indexOf(answer.updateEmployeeName)+1;
 
-            execQuery(`UPDATE employee_table
-                SET role_id = ${roleIdUpdate}
-                WHERE id = ${employeeNameIdUpdate}`
+            execQuery(`UPDATE 
+                            employee_table
+                        SET 
+                            role_id = ${roleIdUpdate}
+                        WHERE  
+                            id = ${employeeNameIdUpdate}`
                     , (err, res) => {
                         if (err) {
                             console.error(err);
@@ -294,7 +286,6 @@ async function updateEmployeeRole ( ) {
                         }
                     });
         });
-
     } catch (err) {
         console.error(err);
     };
