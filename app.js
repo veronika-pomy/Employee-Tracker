@@ -4,13 +4,7 @@ const mysql = require('./node_modules/mysql2');
 const util = require('./node_modules/util/util');
 const cTable = require('./node_modules/console.table');
 // mysql queries required from separate file
-const { CONNECTION_QUERY, 
-        DEPARTMENT_QUERY,
-        ROLE_QUERY, 
-        EMPLOYEES_QUERY, 
-        ADD_DEPARTMENT,
-        ADD_ROLE,
-        ADD_EMPLOYEE} = require('./assets/js/queries');
+const { CONNECTION_QUERY, DEPARTMENT_QUERY, ROLE_QUERY, EMPLOYEES_QUERY, ADD_DEPARTMENT, ADD_ROLE, ADD_EMPLOYEE} = require('./assets/js/queries');
 
 // variables for display
 const { greeting, color } = require('./assets/js/greeting');
@@ -67,12 +61,7 @@ async function addDepartment (input) {
 // add new role
 async function addRole (input) {
     try {
-        execQuery(`SELECT
-                            department_name
-                        FROM 
-                            department_table
-                        ORDER BY 
-                            department_table.id;`
+        execQuery(`SELECT department_name FROM department_table ORDER BY department_table.id;`
         , (err, res) => {
             if (err) {
                 console.error(err);
@@ -92,7 +81,7 @@ async function addRole (input) {
             {
                 type: 'input',
                 name: 'newSalary',
-                message: 'Please enter the salary for the  new role:',
+                message: 'Please enter the salary for the new role:',
             },
             {
                 type: 'list',
@@ -128,12 +117,7 @@ async function addRole (input) {
 // add new employee
 async function addEmployee (input) {
     try {
-        execQuery(`SELECT
-                                title
-                        FROM 
-                                role_table
-                        ORDER BY 
-                                role_table.id;`
+        execQuery(`SELECT title FROM role_table ORDER BY role_table.id;`
         , (err, res) => {
             if (err) {
                 console.error(err);
@@ -142,15 +126,11 @@ async function addEmployee (input) {
                 for (let i = 0; i < res.length; i++){
                     arrayRole.push(res[i].title);
                 };
+
             };
         });
 
-        execQuery(`SELECT
-                        CONCAT(first_name, ' ', last_name) as employee
-                    FROM 
-                                employee_table
-                    ORDER BY 
-                                employee_table.id;`
+        execQuery(`SELECT CONCAT(first_name, ' ', last_name) as employee FROM employee_table ORDER BY employee_table.id;`
                 , (err, res) => {
                     if (err) {
                         console.error(err);
@@ -159,6 +139,7 @@ async function addEmployee (input) {
                             arrayEmployeeName.push(res[i].employee);
                         };
                 };
+                arrayEmployeeName.push('None'); // add option for no manager
             });
 
         const answer = inquirer.prompt([
@@ -188,13 +169,15 @@ async function addEmployee (input) {
         .then((answer) => {
             // assign role name to role_id
             const roleId = arrayRole.indexOf(answer.newEmployeeRole)+1;
-            // assign employee_id name as managerId
-            const managerId = arrayEmployeeName.indexOf(answer.newEmployeeManager)+1;
+            let managerId;
+            if (answer.newEmployeeManager === "None") {
+                managerId = null;
+            } else {
+                // assign employee_id name as managerId
+                managerId = arrayEmployeeName.indexOf(answer.newEmployeeManager)+1;
+            };
 
-            execQuery( input +    `("${answer.newEmployeeFirstName}", 
-                                    "${answer.newEmployeeLastName}", 
-                                    ${roleId}, 
-                                    ${managerId});`
+            execQuery( input +    `("${answer.newEmployeeFirstName}", "${answer.newEmployeeLastName}", ${roleId}, ${managerId});`
                     , (err, res) => {
                         if (err) {
                             console.error(err);
@@ -219,12 +202,7 @@ let updateArrayRole = [];
 // update employee role
 async function updateEmployeeRole ( ) {
     try {
-        execQuery(`SELECT
-                        CONCAT(first_name, ' ', last_name) as employee
-                    FROM 
-                        employee_table
-                    ORDER BY 
-                        employee_table.id;`
+        execQuery(`SELECT CONCAT(first_name, ' ', last_name) as employee FROM employee_table ORDER BY employee_table.id;`
             , (err, res) => {
             if (err) {
                 console.error(err);
@@ -235,12 +213,7 @@ async function updateEmployeeRole ( ) {
             };
         });
         
-        execQuery(`SELECT
-                        title
-                    FROM 
-                        role_table
-                    ORDER BY 
-                        role_table.id;`
+        execQuery(`SELECT title FROM role_table ORDER BY role_table.id;`
             , (err, res) => {
             if (err) {
                 console.error(err);
@@ -271,12 +244,7 @@ async function updateEmployeeRole ( ) {
             // assign employee_id name as managerId
             const employeeNameIdUpdate = updateArrayName.indexOf(answer.updateEmployeeName)+1;
 
-            execQuery(`UPDATE 
-                            employee_table
-                        SET 
-                            role_id = ${roleIdUpdate}
-                        WHERE  
-                            id = ${employeeNameIdUpdate}`
+            execQuery(`UPDATE employee_table SET role_id = ${roleIdUpdate} WHERE id = ${employeeNameIdUpdate}`
                     , (err, res) => {
                         if (err) {
                             console.error(err);
@@ -352,7 +320,7 @@ async function prompt ( ) {
 
 // initialize app
 function init ( ) {
-    console.log(color , greeting);
+    // console.log(color , greeting);
     prompt();
 };
 
