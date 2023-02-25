@@ -76,6 +76,16 @@ const ADD_EMPLOYEE = `INSERT INTO
                         VALUES          
 `;
 
+// select department name from department table 
+
+//
+
+//
+
+//
+
+//
+
 module.exports = { 
         CONNECTION_QUERY, 
         DEPARTMENT_QUERY, 

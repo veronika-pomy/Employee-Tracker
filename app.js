@@ -4,7 +4,7 @@ const mysql = require('./node_modules/mysql2');
 const util = require('./node_modules/util/util');
 const cTable = require('./node_modules/console.table');
 // mysql queries required from separate file
-const { CONNECTION_QUERY, DEPARTMENT_QUERY, ROLE_QUERY, EMPLOYEES_QUERY, ADD_DEPARTMENT, ADD_ROLE, ADD_EMPLOYEE} = require('./assets/js/queries');
+const { CONNECTION_QUERY, DEPARTMENT_QUERY, ROLE_QUERY, EMPLOYEES_QUERY, ADD_DEPARTMENT, ADD_ROLE, ADD_EMPLOYEE } = require('./assets/js/queries');
 
 // variables for display
 const { greeting, color } = require('./assets/js/greeting');
