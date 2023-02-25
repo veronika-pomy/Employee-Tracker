@@ -16,6 +16,8 @@ let execQuery;
 let arrayDepartment = [];
 let arrayRole = [];
 let arrayEmployeeName = [];
+let updateArrayName = [];
+let updateArrayRole = [];
 
 // make query and display table in terminal
 async function displayTable (input) {
@@ -50,7 +52,7 @@ async function addDepartment (input) {
                     } else {
                         console.log(color,`Added ${answer.newDepartment} to the database.`);
                         prompt ( );
-                    }
+                    };
             });
         
     } catch (err) {
@@ -93,18 +95,14 @@ async function addRole (input) {
         .then((answer) => {
             // assign deptartment_id as deptId
             const deptId = arrayDepartment.indexOf(answer.newDepartmentChoice)+1;
-            execQuery( input + `("${answer.newRole}", 
-                                "${answer.newSalary}", 
-                                "${deptId}"); `             
+            execQuery( input + `("${answer.newRole}", "${answer.newSalary}", "${deptId}"); `             
             , (err, res) => {
             if (err) {
                 console.error(err);
             } else {
                 console.log(color,`Added ${answer.newRole} to the database.`);
-
                 //reset array to reuse
                 arrayDepartment = [];
-
                 prompt ( );
             }
     });
@@ -177,13 +175,12 @@ async function addEmployee (input) {
                 managerId = arrayEmployeeName.indexOf(answer.newEmployeeManager)+1;
             };
 
-            execQuery( input +    `("${answer.newEmployeeFirstName}", "${answer.newEmployeeLastName}", ${roleId}, ${managerId});`
+            execQuery( input + `("${answer.newEmployeeFirstName}", "${answer.newEmployeeLastName}", ${roleId}, ${managerId});`
                     , (err, res) => {
                         if (err) {
                             console.error(err);
                         } else {
                             console.log(color,`Added ${answer.newEmployeeFirstName} ${answer.newEmployeeLastName} to the database.`);
-
                             // reset arrays to reuse
                             arrayEmployeeName = [];
                             arrayRole = [];
@@ -196,67 +193,68 @@ async function addEmployee (input) {
     };
 };
 
-let updateArrayName = [];
-let updateArrayRole = [];
-
 // update employee role
 async function updateEmployeeRole ( ) {
-    try {
-        execQuery(`SELECT CONCAT(first_name, ' ', last_name) as employee FROM employee_table ORDER BY employee_table.id;`
-            , (err, res) => {
-            if (err) {
-                console.error(err);
-            } else {
-                for (let i = 0; i < res.length; i++){
-                    updateArrayName.push(res[i].employee);
-                };
-            };
-        });
-        
-        execQuery(`SELECT title FROM role_table ORDER BY role_table.id;`
-            , (err, res) => {
-            if (err) {
-                console.error(err);
-            } else {
-                for (let i = 0; i < res.length; i++){
-                    updateArrayRole.push(res[i].title);
-                };
-            };
-        });
+    execQuery(`SELECT CONCAT(first_name, ' ', last_name) as employee FROM employee_table ORDER BY employee_table.id;`
+    , (err, res) => {
+        if (err) {
+        console.error(err);
+    } else {
+        for (let i = 0; i < res.length; i++){
+            updateArrayName.push(res[i].employee);
+        };
 
         const answer = inquirer.prompt([
             {
                 type: 'list',
                 name: 'updateEmployeeName',
                 message: 'Please enter which employee\'s role you\'d like to update:',
-                choices: updateArrayRole
-            },
-            {
-                type: 'list',
-                name: 'updateEmployeeRole',
-                message: 'Please enter which role you\'d like to assign to the selected employee:',
-                choices: updateArrayRole
+                choices: updateArrayName
             },
         ])
-        .then((answer) => {
-            // assign role name to role_id
-            const roleIdUpdate = updateArrayRole.indexOf(answer.updateEmployeeRole)+1;
-            // assign employee_id name as managerId
-            const employeeNameIdUpdate = updateArrayName.indexOf(answer.updateEmployeeName)+1;
+        .then(answer => {
 
-            execQuery(`UPDATE employee_table SET role_id = ${roleIdUpdate} WHERE id = ${employeeNameIdUpdate}`
+                const chosenName = answer.updateEmployeeName;
+
+                execQuery(`SELECT title FROM role_table ORDER BY role_table.id;`
                     , (err, res) => {
                         if (err) {
-                            console.error(err);
-                        } else {
-                            console.log(color,`Updated role for employee: ${answer.updateEmployeeName}.`);
-                            prompt ( );
-                        }
-                    });
-        });
-    } catch (err) {
-        console.error(err);
-    };
+                        console.error(err);
+                    } else {
+                        for (let i = 0; i < res.length; i++){
+                            updateArrayRole.push(res[i].title);
+                        };
+
+                        const answer = inquirer.prompt([
+                            {
+                                type: 'list',
+                                name: 'updateEmployeeRole',
+                                message: 'Please enter which role you\'d like to assign to the selected employee:',
+                                choices:  updateArrayRole
+                            },
+                        ])
+                        .then((answer) => {
+                            const chosenRole = answer.updateEmployeeRole;
+                            // assign chosen role as role id to update
+                            const roleIdUpdate = updateArrayRole.indexOf(chosenRole)+1;
+                            // assign chosen namem as employee id to update
+                            const employeeNameIdUpdate = updateArrayName.indexOf(chosenName)+1;
+
+                            execQuery(`UPDATE employee_table SET role_id = ${roleIdUpdate} WHERE id = ${employeeNameIdUpdate}`
+                                    , (err, res) => {
+                                        if (err) {
+                                            console.error(err);
+                                        } else {
+                                            console.log(color,`Updated role for employee: ${chosenName}.`);
+                                            prompt ( );
+                                        };
+                            });
+                        }); 
+                    };
+                });
+            });
+        };
+    });
 };
 
 // main prompt
