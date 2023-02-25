@@ -77,24 +77,33 @@ const ADD_EMPLOYEE = `INSERT INTO
 `;
 
 // select department name from department table
-const QUERY_DEPT_NAME = `
-
-SELECT department_name FROM department_table ORDER BY department_table.id;
+const QUERY_DEPT_NAME = `SELECT 
+                                department_name 
+                        FROM 
+                                department_table 
+                        ORDER BY 
+                                department_table.id;
 
 `; 
 
 // select job title from role table
-const QUERY_TITLE = `
-
-SELECT title FROM role_table ORDER BY role_table.id;
+const QUERY_TITLE = `SELECT 
+                                title
+                        FROM 
+                                role_table 
+                        ORDER BY 
+                                role_table.id;
 
 `;
 
 // select employee name from employee table 
 
-const QUERY_EMP_NAME = `
-  
-SELECT CONCAT(first_name, ' ', last_name) as employee FROM employee_table ORDER BY employee_table.id;
+const QUERY_EMP_NAME = `SELECT 
+                                CONCAT(first_name, ' ', last_name) as employee 
+                        FROM 
+                                employee_table 
+                        ORDER BY 
+                                employee_table.id;
 
 `;
 
