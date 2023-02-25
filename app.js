@@ -21,8 +21,7 @@ let updateArrayRole = [];
 
 // make query and display table in terminal
 async function displayTable (input) {
-    try {
-        await execQuery(input, (err, res) => {
+    execQuery(input, (err, res) => {
             if (err) {
                 console.error(err);
             } else {
@@ -30,9 +29,6 @@ async function displayTable (input) {
                 prompt ( );
             };
     });
-    } catch (err) {
-        console.error(err);
-    };
 };
 
 // add new dept
