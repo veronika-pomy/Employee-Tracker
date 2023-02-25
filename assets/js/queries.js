@@ -7,7 +7,7 @@ const CONNECTION_QUERY = {
 };
 
 // view all departments 
-const DEPARTMENT_QUERY = `SELECT
+const DEP_TABLE_QUERY = `SELECT
                                   * 
                           FROM 
                                   department_table
@@ -16,7 +16,7 @@ const DEPARTMENT_QUERY = `SELECT
 `;
 
 // view all roles
-const ROLE_QUERY = `SELECT 
+const ROLE_TABLE_QUERY = `SELECT 
                                   role_table.id, 
                                   role_table.title, 
                                   department_table.department_name, 
@@ -32,7 +32,7 @@ const ROLE_QUERY = `SELECT
 `;
 
 // view all employees
-const EMPLOYEES_QUERY = `SELECT 
+const EMP_TABLE_QUERY = `SELECT 
                                   e.id as employee_id,
                                   e.first_name as employee_first_name,
                                   e.last_name as employee_last_name,
@@ -76,22 +76,37 @@ const ADD_EMPLOYEE = `INSERT INTO
                         VALUES          
 `;
 
-// select department name from department table 
+// select department name from department table
+const QUERY_DEPT_NAME = `
 
-//
+SELECT department_name FROM department_table ORDER BY department_table.id;
 
-//
+`; 
 
-//
+// select job title from role table
+const QUERY_TITLE = `
 
-//
+SELECT title FROM role_table ORDER BY role_table.id;
+
+`;
+
+// select employee name from employee table 
+
+const QUERY_EMP_NAME = `
+  
+SELECT CONCAT(first_name, ' ', last_name) as employee FROM employee_table ORDER BY employee_table.id;
+
+`;
 
 module.exports = { 
         CONNECTION_QUERY, 
-        DEPARTMENT_QUERY, 
-        ROLE_QUERY, 
-        EMPLOYEES_QUERY, 
+        DEP_TABLE_QUERY, 
+        ROLE_TABLE_QUERY, 
+        EMP_TABLE_QUERY, 
         ADD_DEPARTMENT, 
         ADD_ROLE, 
-        ADD_EMPLOYEE
+        ADD_EMPLOYEE,
+        QUERY_DEPT_NAME,
+        QUERY_TITLE,
+        QUERY_EMP_NAME
 };

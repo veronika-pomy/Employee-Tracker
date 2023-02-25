@@ -4,7 +4,7 @@ const mysql = require('./node_modules/mysql2');
 const util = require('./node_modules/util/util');
 const cTable = require('./node_modules/console.table');
 // mysql queries required from separate file
-const { CONNECTION_QUERY, DEPARTMENT_QUERY, ROLE_QUERY, EMPLOYEES_QUERY, ADD_DEPARTMENT, ADD_ROLE, ADD_EMPLOYEE } = require('./assets/js/queries');
+const query = require('./assets/js/queries');
 
 // variables for display
 const { greeting, color } = require('./assets/js/greeting');
@@ -57,10 +57,9 @@ async function addDepartment (input) {
 };
 
 // add new role
-async function addRole (input) {
+async function addRole (input, inputPromptDep) {
     try {
-        execQuery(`SELECT department_name FROM department_table ORDER BY department_table.id;`
-        , (err, res) => {
+        execQuery(inputPromptDep, (err, res) => {
             if (err) {
                 console.error(err);
             } else {
@@ -109,10 +108,9 @@ async function addRole (input) {
 };
 
 // add new employee
-async function addEmployee (input) {
+async function addEmployee (input, inputPromptRole, inputPromptName) {
     try {
-        execQuery(`SELECT title FROM role_table ORDER BY role_table.id;`
-        , (err, res) => {
+        execQuery(inputPromptRole, (err, res) => {
             if (err) {
                 console.error(err);
             } else {
@@ -124,8 +122,7 @@ async function addEmployee (input) {
             };
         });
 
-        execQuery(`SELECT CONCAT(first_name, ' ', last_name) as employee FROM employee_table ORDER BY employee_table.id;`
-                , (err, res) => {
+        execQuery(inputPromptName, (err, res) => {
                     if (err) {
                         console.error(err);
                     } else {
@@ -190,9 +187,8 @@ async function addEmployee (input) {
 };
 
 // update employee role
-async function updateEmployeeRole ( ) {
-    execQuery(`SELECT CONCAT(first_name, ' ', last_name) as employee FROM employee_table ORDER BY employee_table.id;`
-    , (err, res) => {
+async function updateEmployeeRole (inputPromptRole, inputPromptName) {
+    execQuery(inputPromptName, (err, res) => {
         if (err) {
         console.error(err);
     } else {
@@ -212,8 +208,7 @@ async function updateEmployeeRole ( ) {
 
                 const chosenName = answer.updateEmployeeName;
 
-                execQuery(`SELECT title FROM role_table ORDER BY role_table.id;`
-                    , (err, res) => {
+                execQuery(inputPromptRole, (err, res) => {
                         if (err) {
                         console.error(err);
                     } else {
@@ -276,32 +271,32 @@ async function prompt ( ) {
 
         // if connection has not been established yet, create connection obj and execQuery obj
         if (!connection) {
-            connection = mysql.createConnection(CONNECTION_QUERY); 
+            connection = mysql.createConnection(query.CONNECTION_QUERY); 
             execQuery = util.promisify(connection.query.bind(connection)); // make connection an obj inside execQuery
         }
 
         // sql queries based on choice 
         switch(usersChoice) {
             case 'View all departments':
-                displayTable(DEPARTMENT_QUERY);
+                displayTable(query.DEP_TABLE_QUERY);
                 break;
             case 'View all roles':
-                displayTable (ROLE_QUERY);
+                displayTable (query.ROLE_TABLE_QUERY);
             break;
             case 'View all employees':
-                displayTable (EMPLOYEES_QUERY);
+                displayTable (query.EMP_TABLE_QUERY);
             break;
             case 'Add a department':
-                addDepartment (ADD_DEPARTMENT);
+                addDepartment (query.ADD_DEPARTMENT);
             break;
             case 'Add a role':
-                addRole (ADD_ROLE);
+                addRole (query.ADD_ROLE, query.QUERY_DEPT_NAME);
             break;
             case 'Add an employee':
-                addEmployee (ADD_EMPLOYEE);
+                addEmployee (query.ADD_EMPLOYEE, query.QUERY_TITLE, query.QUERY_EMP_NAME);
             break;
             case 'Update an employee role':
-                updateEmployeeRole ( );
+                updateEmployeeRole (query.QUERY_TITLE, query.QUERY_EMP_NAME);
             break;
             case 'Quit':
                 connection.end();
