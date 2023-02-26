@@ -42,14 +42,14 @@ async function addDepartment (input) {
             },
         ]);
         
-        await execQuery( input + `("${answer.newDepartment}");`, (err, res) => {
-                    if (err) {
-                        console.error(err);
-                    } else {
-                        console.log(color,`Added ${answer.newDepartment} to the database.`);
-                        prompt ( );
-                    };
-            });
+        execQuery( input + `("${answer.newDepartment}");`, (err, res) => {
+            if (err) {
+                console.error(err);
+            } else {
+                console.log(color,`Added ${answer.newDepartment} to the database.`);
+                prompt ( );
+            };
+        });
         
     } catch (err) {
         console.error(err);
@@ -191,7 +191,7 @@ async function updateEmployeeRole (inputPromptRole, inputPromptName) {
     execQuery(inputPromptName, (err, res) => {
         if (err) {
         console.error(err);
-    } else {
+        } else {
         for (let i = 0; i < res.length; i++){
             updateArrayName.push(res[i].employee);
         };
@@ -267,7 +267,7 @@ async function prompt ( ) {
             },
         ]);
 
-        const usersChoice = answer.choice;
+        const usersChoice = await answer.choice;
 
         // if connection has not been established yet, create connection obj and execQuery obj
         if (!connection) {
@@ -309,7 +309,7 @@ async function prompt ( ) {
 
 // initialize app
 function init ( ) {
-    // console.log(color , greeting);
+    console.log(color , greeting);
     prompt();
 };
 
